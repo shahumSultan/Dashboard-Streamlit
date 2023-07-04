@@ -11,10 +11,10 @@ def forNeuralProphet(dataframe):
     start_date = '2019-01-01'
     data['ds'] = pd.date_range(start=start_date, periods=len(data), freq='D')
     data = data[['ds', 'y']]
-    data = data.head(730)
+    
     
     model = NeuralProphet(
-        n_changepoints=20,
+        n_changepoints=10,
         yearly_seasonality=True,
         weekly_seasonality=False,
         daily_seasonality=True,
@@ -32,8 +32,8 @@ st.title("Analytics Dashboard")
 st.subheader("Sales Forecasting")
 
 with st.sidebar:
-    uploadedFile = st.file_uploader(label='Upload CSV', type=['csv'], accept_multiple_files=False)
-    
+    uploadedFile = st.file_uploader(label='Upload CSV', type=['csv'], accept_multiple_files=False, key='sales')
+  
 if uploadedFile is not None:
     df = pd.read_csv(uploadedFile, encoding='Latin-1')
     st.write(df)
