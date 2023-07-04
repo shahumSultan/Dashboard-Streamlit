@@ -17,7 +17,7 @@ if uploaded_file is not None:
     st.dataframe(df)
 
 
-    llm = OpenAI(api_token="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")
+    llm = OpenAI(api_token="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")
     pandas_ai = PandasAI(llm)
 
     question = st.text_input("Talk to Data")

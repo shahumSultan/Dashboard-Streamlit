@@ -6,11 +6,11 @@ st.set_page_config(page_title="Dashboard", layout='wide', initial_sidebar_state=
 set_log_level("ERROR")
 
 def forNeural(dataframe):
-    data = dataframe[['SALES', 'QUANTITYORDERED']]
+    data = dataframe[['SALES']]
     data = data.rename(columns={'SALES':'y'})
     startDate = '2020-01-01'
     data['ds'] = pd.date_range(start=startDate, periods=len(data), freq='D')
-    data = data[['ds', 'y', 'QUANTITYORDERED']]
+    data = data[['ds', 'y']]
     data = data.head(365)
     
     model = NeuralProphet(
@@ -18,10 +18,9 @@ def forNeural(dataframe):
         yearly_seasonality=True,
         weekly_seasonality=True,
         daily_seasonality=True,
-        n_lags=10
+        learning_rate=0.01
     )
     model.set_plotting_backend('plotly')
-    model.add_future_regressor('QUANTITYORDERED', normalize='standerize')
     metrics = model.fit(data)
     df_future = model.make_future_dataframe(data, n_historic_predictions=True, periods=365)
     forecast = model.predict(df_future)
@@ -39,4 +38,4 @@ with st.sidebar:
 if uploadedFile is not None:
     df = pd.read_csv(uploadedFile, encoding='Latin-1')
     data = forNeural(df)
-    st.plotly_chart(data)
+    st.plotly_chart(data, use_container_width=True)
