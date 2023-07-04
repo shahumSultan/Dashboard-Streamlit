@@ -1,3 +1,5 @@
 *.ipynb
 data/
 lightning_logs/
+*.log
+cache/
