@@ -11,12 +11,13 @@ def forNeuralProphet(dataframe):
     start_date = '2019-01-01'
     data['ds'] = pd.date_range(start=start_date, periods=len(data), freq='D')
     data = data[['ds', 'y']]
+    data = data.head(730)
     
     model = NeuralProphet(
-        n_changepoints=10,
+        n_changepoints=20,
         yearly_seasonality=True,
         weekly_seasonality=False,
-        daily_seasonality=False,
+        daily_seasonality=True,
         learning_rate=0.02
     )
     
