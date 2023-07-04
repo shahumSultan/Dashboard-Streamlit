@@ -2,31 +2,33 @@ import streamlit as st
 import pandas as pd
 from neuralprophet import NeuralProphet, set_log_level
     
-st.set_page_config(page_title="Dashboard", layout='wide', initial_sidebar_state='collapsed')
+st.set_page_config(page_title="Dashboard", layout='wide', initial_sidebar_state='expanded')
 set_log_level("ERROR")
 
-def forNeuralProphet(dataframe):
-    data = dataframe[['SALES']]
+def forNeural(dataframe):
+    data = dataframe[['SALES', 'QUANTITYORDERED']]
     data = data.rename(columns={'SALES':'y'})
-    start_date = '2019-01-01'
-    data['ds'] = pd.date_range(start=start_date, periods=len(data), freq='D')
-    data = data[['ds', 'y']]
-    
+    startDate = '2020-01-01'
+    data['ds'] = pd.date_range(start=startDate, periods=len(data), freq='D')
+    data = data[['ds', 'y', 'QUANTITYORDERED']]
+    data = data.head(365)
     
     model = NeuralProphet(
         n_changepoints=10,
         yearly_seasonality=True,
-        weekly_seasonality=False,
+        weekly_seasonality=True,
         daily_seasonality=True,
-        learning_rate=0.02
+        n_lags=10
     )
-    
+    model.set_plotting_backend('plotly')
+    model.add_future_regressor('QUANTITYORDERED', normalize='standerize')
     metrics = model.fit(data)
-    data_future = model.make_future_dataframe(data, n_historic_predictions=True, periods=365)
-    forecast = model.predict(data_future)
+    df_future = model.make_future_dataframe(data, n_historic_predictions=True, periods=365)
+    forecast = model.predict(df_future)
     graph = model.plot(forecast)
     
     return graph
+    
 
 st.title("Analytics Dashboard")
 st.subheader("Sales Forecasting")
@@ -36,6 +38,5 @@ with st.sidebar:
   
 if uploadedFile is not None:
     df = pd.read_csv(uploadedFile, encoding='Latin-1')
-    st.write(df)
-    
-    st.plotly_chart(forNeuralProphet(df), theme='streamlit')
+    data = forNeural(df)
+    st.plotly_chart(data)
