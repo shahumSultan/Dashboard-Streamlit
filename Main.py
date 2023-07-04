@@ -7,10 +7,7 @@ st.set_page_config(page_title="Dashboard", layout='wide', initial_sidebar_state=
 
 st.title("Analytics Dashboard")
 with st.sidebar:
-    st.header("Pages")
-    st.title("CSV File Uploader")
-    st.write("Please upload a CSV file.")
-    uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
+    uploaded_file = st.file_uploader("Upload CSV", type=['csv'])
   
 # Check if a file was uploaded
 if uploaded_file is not None:
